@@ -2,6 +2,5 @@ services:
   - type: web
     name: tactical-strike-online
     runtime: python
-    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: python server.py

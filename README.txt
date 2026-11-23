@@ -1,13 +1,9 @@
-TACTICAL STRIKE ONLINE - RENDER DEPLOY PAKETI
+TACTICAL STRIKE ONLINE v2
 
-Bu paket Python aiohttp sunucusunu ve index.html oyun istemcisini içerir.
+Dosyalar: index.html, server.py, requirements.txt, render.yaml
+Yerel çalıştırma: pip install -r requirements.txt ardından python server.py
+Tarayıcı: http://127.0.0.1:8080
 
-Yayınlama:
-1. ZIP'i çıkarın.
-2. İçindeki dosyaları GitHub'da yeni bir depoya yükleyin (server.py, index.html, requirements.txt, render.yaml).
-3. Render hesabında New > Web Service seçin ve GitHub deposunu bağlayın.
-4. render.yaml algılanırsa ayarları onaylayıp deploy edin.
-5. Deploy tamamlanınca Render'ın verdiği https://....onrender.com adresini kullanın.
-
-Not: Ücretsiz Render servisi 15 dakika trafik almazsa uykuya geçebilir; sonraki bağlantıda yaklaşık bir dakika açılması gerekebilir. Kalıcı açık kalması için ücretli servis gerekir.
-Bu oyun oyuncu/oda durumunu bellekte tutar; sunucu yeniden başlarsa aktif odalar ve oyuncular sıfırlanır.
+Silahlar: M4, Glock, AWP, Minigun, AK-47, MP5, Pompalı, Desert Eagle.
+Kontroller: WASD, fare ateş, R şarjör, 1-8 silah. Mobil dokunmatik kontrol. PS4: sol analog hareket, sağ analog nişan, R2 ateş, X şarjör.
+Online: aynı oda kodunu paylaşın. Render dağıtımında mevcut servis dosyalarını bu paketle güncelleyin.

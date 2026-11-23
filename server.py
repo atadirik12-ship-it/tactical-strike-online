@@ -6,12 +6,18 @@ W, H = 1485, 945
 TICK = 1/30
 ROOMS = {}
 WALLS = [(0,0,W,18),(0,H-18,W,18),(0,0,18,H),(W-18,0,18,H),
-         (250,170,190,42),(620,120,240,46),(980,580,230,46),(430,690,220,42),(900,300,170,38)]
+         (250,170,190,42),(620,120,240,46),(980,580,230,46),(430,690,220,42),(900,300,170,38),
+         (330,300,130,28),(720,250,170,32),(1120,440,150,30),(520,760,180,28),
+         (180,520,42,150),(820,570,42,130),(1260,250,42,130),(560,420,120,26)]
 WEAPONS = {
  'm4': {'damage':27,'rate':0.12,'speed':1050,'mag':30,'reserve':90},
  'glock': {'damage':22,'rate':0.23,'speed':850,'mag':15,'reserve':45},
  'awp': {'damage':90,'rate':1.05,'speed':1450,'mag':5,'reserve':20},
  'minigun': {'damage':11,'rate':0.06,'speed':980,'mag':120,'reserve':360},
+ 'ak47': {'damage':32,'rate':0.105,'speed':1080,'mag':30,'reserve':90},
+ 'mp5': {'damage':20,'rate':0.075,'speed':940,'mag':35,'reserve':105},
+ 'shotgun': {'damage':13,'rate':0.72,'speed':820,'mag':8,'reserve':40},
+ 'deagle': {'damage':48,'rate':0.38,'speed':1150,'mag':7,'reserve':35},
 }
 
 def new_room(code):
@@ -82,14 +88,18 @@ async def game_loop(app):
           if i.get('reload') and now>=p['reload_until']:
             w=p['weapon']; spec=WEAPONS[w]
             if p['ammo'][w] < spec['mag'] and p['reserve'][w] > 0:
-              p['reload_until']=now+({'m4':1.65,'glock':1.25,'awp':2.35,'minigun':3.8}[w])
+              p['reload_until']=now+({'m4':1.65,'glock':1.25,'awp':2.35,'minigun':3.8,'ak47':1.8,'mp5':1.55,'shotgun':2.2,'deagle':1.6}[w])
             p['input']['reload']=False
           if p['reload_until'] and now>=p['reload_until']:
             w=p['weapon']; need=WEAPONS[w]['mag']-p['ammo'][w]; take=min(need,p['reserve'][w]); p['ammo'][w]+=take; p['reserve'][w]-=take; p['reload_until']=0
           w=p['weapon']; spec=WEAPONS[w]
           if i.get('fire') and now-p['last_shot']>=spec['rate'] and now>=p['reload_until'] and p['ammo'][w]>0:
-            p['ammo'][w]-=1; p['last_shot']=now; a=p['angle']+random.uniform(-({'m4':.025,'glock':.035,'awp':.008,'minigun':.085}[w]),({'m4':.025,'glock':.035,'awp':.008,'minigun':.085}[w]))
-            bullets.append({'x':p['x']+math.cos(a)*22,'y':p['y']+math.sin(a)*22,'vx':math.cos(a)*spec['speed'],'vy':math.sin(a)*spec['speed'],'owner':pid,'damage':spec['damage'],'life':1.4})
+            p['ammo'][w]-=1; p['last_shot']=now; a=p['angle']+random.uniform(-({'m4':.025,'glock':.035,'awp':.008,'minigun':.085,'ak47':.045,'mp5':.055,'shotgun':.16,'deagle':.07}[w]),({'m4':.025,'glock':.035,'awp':.008,'minigun':.085,'ak47':.045,'mp5':.055,'shotgun':.16,'deagle':.07}[w]))
+            
+            pellet_count=6 if w=='shotgun' else 1
+            for _ in range(pellet_count):
+              pa=a+(random.uniform(-.19,.19) if w=='shotgun' else 0)
+              bullets.append({'x':p['x']+math.cos(pa)*22,'y':p['y']+math.sin(pa)*22,'vx':math.cos(pa)*spec['speed'],'vy':math.sin(pa)*spec['speed'],'owner':pid,'damage':spec['damage'],'life':1.4})
       for b in bullets[:]:
         b['x']+=b['vx']*TICK; b['y']+=b['vy']*TICK; b['life']-=TICK
         hit= b['life']<=0 or not (0<b['x']<W and 0<b['y']<H) or any(rx<=b['x']<=rx+rw and ry<=b['y']<=ry+rh for rx,ry,rw,rh in WALLS)
